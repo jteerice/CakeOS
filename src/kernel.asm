@@ -20,6 +20,18 @@ _start:
 	or al, 2
 	out 0x92, al
 
+	; Remap the master Programmable Interrupt Controller
+	mov al, 00010001b ; Put PIC into init mode
+	out 0x20, al ; Tell master PIC
+	mov al, 0x20 ; Interrupt 0x20 is where Interrupt Service Routine should start
+	out 0x21, al
+	mov al, 00000001b ; Put PIC into x86 mode
+	out 0x21, al
+	; End remapping of master PIC
+
+	; Enable interrupts
+	sti
+
 	call kernel_main
 	jmp $
 

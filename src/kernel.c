@@ -74,8 +74,6 @@ void kernel_main() {
 	terminal_initialize();
 	print("Hello World!\n"); 
 
-	// Initialize IDT
+	// Initialize Interrupt Descriptor Table
 	idt_init();
-
-	outb(0x60, 0xff);
 }
