@@ -92,5 +92,6 @@ void kernel_main() {
 
 	struct path_root* root_path = pathparser_parse("0:/bin/shell.exe", NULL);
 	if (root_path) {
+
 	}
 }
