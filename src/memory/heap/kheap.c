@@ -16,10 +16,8 @@ void kheap_init() {
 	
 	int res = heap_create(&kernel_heap, (void*)(CAKEOS_HEAP_ADDRESS), end, &kernel_heap_table);
 	if (res < 0) {
-
 		print("Failed to create heap\n");
 	}
-
 
 }
 
@@ -35,10 +33,12 @@ void* kzalloc(size_t size) {
 		return 0;
 
 	memset(ptr, 0x00, size);
+
 	return ptr;
 }
 
 void kfree(void* ptr) {
 
 	heap_free(&kernel_heap, ptr);
+	
 }

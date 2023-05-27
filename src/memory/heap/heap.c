@@ -12,7 +12,6 @@ static int heap_validate_table(void* ptr, void* end, struct heap_table* table) {
 	size_t total_blocks = table_size / CAKEOS_HEAP_BLOCK_SIZE;
 
 	if (table->total != total_blocks) {
-
 		res = -EINVARG;
 		goto out;
 	}
@@ -31,7 +30,6 @@ int heap_create(struct heap* heap, void* ptr, void* end, struct heap_table* tabl
 	int res = 0;
 
 	if (!heap_validate_alignment(ptr) || !heap_validate_alignment(end)) {
-		
 		res = -EINVARG;
 		goto out;
 	}
@@ -42,7 +40,6 @@ int heap_create(struct heap* heap, void* ptr, void* end, struct heap_table* tabl
 
 	res = heap_validate_table(ptr, end, table);
 	if (res < 0) {
-		
 		goto out;
 	}
 
@@ -57,7 +54,6 @@ out:
 static uint32_t heap_align_value_to_upper(uint32_t val) {
 
 	if ((val % CAKEOS_HEAP_BLOCK_SIZE) == 0) {
-
 		return val;
 	}
 
@@ -79,7 +75,6 @@ int heap_get_start_block(struct heap* heap, uint32_t total_blocks) {
 	int bs = -1;
 
 	for (size_t i = 0; i < table->total; i++) {
-		
 		if (heap_get_entry_type(table->entries[i]) != HEAP_BLOCK_TABLE_ENTRY_FREE) {
 			bc = 0;
 			bs = -1;
@@ -98,7 +93,6 @@ int heap_get_start_block(struct heap* heap, uint32_t total_blocks) {
 	}
 
 	if (bs == -1) {
-
 		return -ENOMEM;
 	}
 
@@ -116,19 +110,17 @@ void heap_mark_blocks_taken(struct heap* heap, int start_block, int total_blocks
 
 	HEAP_BLOCK_TABLE_ENTRY entry = HEAP_BLOCK_TABLE_ENTRY_TAKEN | HEAP_BLOCK_IS_FIRST;
 	if (total_blocks > 1) {
-
 		entry |= HEAP_BLOCK_HAS_NEXT;
 	}
 
 	for (int i = start_block; i <= end_block; i++) {
-
 		heap->table->entries[i] = entry;
 		entry = HEAP_BLOCK_TABLE_ENTRY_TAKEN;
 		if (i != (end_block - 1)) {
-
 			entry |= HEAP_BLOCK_HAS_NEXT;
 		}
 	}
+
 }
 
 void* heap_malloc_blocks(struct heap* heap, uint32_t total_blocks) {
@@ -137,7 +129,6 @@ void* heap_malloc_blocks(struct heap* heap, uint32_t total_blocks) {
 
 	int start_block = heap_get_start_block(heap, total_blocks);
 	if (start_block < 0) {
-
 		goto out;
 	}
 	
@@ -154,14 +145,13 @@ void heap_mark_blocks_free(struct heap* heap, int starting_block) {
 
 	struct heap_table* table = heap->table;
 	for (int i = starting_block; i < (int)table->total; i++) {
-
 		HEAP_BLOCK_TABLE_ENTRY entry = table->entries[i];
 		table->entries[i] = HEAP_BLOCK_TABLE_ENTRY_FREE;
 		if (!(entry & HEAP_BLOCK_HAS_NEXT)) {
-
 			break;
 		}
 	}
+
 }
 
 int heap_address_to_block(struct heap* heap, void* address) {
@@ -180,4 +170,5 @@ void* heap_malloc(struct heap* heap, size_t size) {
 void heap_free(struct heap* heap, void* ptr) {
 
 	heap_mark_blocks_free(heap, heap_address_to_block(heap, ptr));
+
 }

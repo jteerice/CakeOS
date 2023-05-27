@@ -17,10 +17,10 @@ int disk_read_sector(int lba, int total, void* buf) {
 
 	unsigned short* ptr = (unsigned short*) buf;
 	for (int i = 0; i < total; i++) {
+		
 		// Poll until buffer is ready
 		char c = insb(0x1F7);
 		while (!(c & 0x08)) {
-
 			c = insb(0x1F7);
 		}
 
@@ -40,6 +40,7 @@ void disk_search_and_init() {
 	memset(&disk, 0, sizeof(disk));
 	disk.type = CAKEOS_DISK_TYPE_REAL;
 	disk.sector_size = CAKEOS_SECTOR_SIZE;
+
 }
 
 struct disk* disk_get(int index) {
@@ -53,7 +54,6 @@ struct disk* disk_get(int index) {
 int disk_read_block(struct disk* idisk, unsigned int lba, int total, void* buf) {
 
 	if (idisk != &disk) {
-
 		return -EIO;
 	}
 

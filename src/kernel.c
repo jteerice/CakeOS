@@ -21,6 +21,7 @@ uint16_t terminal_make_char(char c, char color) {
 void terminal_putchar(int x, int y, char c, char color) {
 
 	video_mem[(y * VGA_WIDTH) + x] = terminal_make_char(c, color);
+
 }
 
 void terminal_writechar(char c, char color) {
@@ -29,7 +30,6 @@ void terminal_writechar(char c, char color) {
 		terminal_row++;
 		terminal_col = 0;
 	} else {
-
 		terminal_putchar(terminal_col, terminal_row, c, color);
 		terminal_col++;
 
@@ -38,6 +38,7 @@ void terminal_writechar(char c, char color) {
 			terminal_row++;
 		}
 	}
+
 }
 
 
@@ -52,6 +53,7 @@ void terminal_initialize() {
 			terminal_putchar(x, y, ' ', 0);
 		}
 	}
+
 }
 
 void print(const char* str) {
@@ -61,6 +63,7 @@ void print(const char* str) {
 	for (int i = 0; i < len; i++) {
 		terminal_writechar(str[i], 15);
 	}
+
 }
 
 static struct paging_4gb_chunk* kernel_chunk = 0;
