@@ -3,12 +3,32 @@ BITS 16
 
 CODE_SEG equ gdt_code - gdt_start
 DATA_SEG equ gdt_data - gdt_start
-_start:
-	jmp short start
-	nop
 
+jmp short start
+nop
 
-times 33 db 0 ; BIOS Parameter Block
+; FAT16 Header
+OEMIdentifier 		db 'CAKEOS  ' ; 8 bytes padded with spaces
+BytesPerSector 		dw 0x200
+SectorsPerCluster 	db 0x80
+ReservedSectors 	dw 200 ; 200 reserved sectors to store the kernel
+FATCopies 		db 0x02
+RootDirEntries 		dw 0x40
+NumSectors 		dw 0x00
+MediaType 		db 0xF8
+SectorsPerFat 		dw 0x100
+SectorsPerTrack 	dw 0x20
+NumberOfHeads 		dw 0x40
+HiddenSectors 		dd 0x00
+SectorsBig 		dd 0x773594
+
+; Extended BPB (Dos 4.0)
+DriverNumber 		db 0x80
+WinNTBit 		db 0x00
+Signature 		db 0x29
+VolumeID 		dd 0xD105
+VolumeIDString		db 'CAKEOS BOOT' ; 11 byte limit
+SystemIDString		db 'FAT16   ' ; 8 bytes padded with spaces
 
 start:
 	jmp 0:step2

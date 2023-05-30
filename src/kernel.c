@@ -8,6 +8,8 @@
 #include "disk/disk.h"
 #include "fs/pparser.h"
 #include "string/string.h"
+#include "disk/streamer.h"
+#include "fs/file.h"
 
 uint16_t* video_mem = 0;
 uint16_t terminal_row = 0;
@@ -75,6 +77,9 @@ void kernel_main() {
 	// Initialize heap
 	kheap_init();
 
+	// Initialize filesystems
+	fs_init();
+
 	// Search and initialize disk
 	disk_search_and_init();
 
@@ -93,8 +98,8 @@ void kernel_main() {
 	// Enable system interrupts
 	enable_interrupts();
 
-	struct path_root* root_path = pathparser_parse("0:/bin/shell.exe", NULL);
-	if (root_path) {
-
+	char buf[20];
+	strcpy(buf, "hello");
+	while (1) {
 	}
 }

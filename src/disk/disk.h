@@ -1,6 +1,8 @@
 #ifndef DISK_H
 #define DISK_H
 
+#include "fs/file.h"
+
 typedef unsigned int CAKEOS_DISK_TYPE;
 
 // Represents a physical hard disk
@@ -10,6 +12,8 @@ struct disk {
 
 	CAKEOS_DISK_TYPE type;
 	int sector_size;
+
+	struct filesystem* filesystem;
 
 };
 
