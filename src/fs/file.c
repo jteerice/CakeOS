@@ -88,7 +88,7 @@ struct filesystem* fs_resolve(struct disk* disk) {
 
 	struct filesystem* fs = 0;
 	for (int i = 0; i < CAKEOS_MAX_FILESYSTEMS; i++) {
-		if (filesystems[1] != 0 && filesystems[i]->resolve(disk) == 0) {
+		if (filesystems[i] != 0 && filesystems[i]->resolve(disk) == 0) {
 			fs = filesystems[i];
 			break;
 		}
