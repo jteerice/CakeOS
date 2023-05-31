@@ -13,7 +13,12 @@ struct disk {
 	CAKEOS_DISK_TYPE type;
 	int sector_size;
 
+	int id;
+
 	struct filesystem* filesystem;
+
+	// Private data of the filesystem
+	void* fs_data;
 
 };
 

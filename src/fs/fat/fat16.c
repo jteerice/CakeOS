@@ -4,6 +4,7 @@
 #include "string/string.h"
 #include "disk/disk.h"
 #include "disk/streamer.h"
+#include "memory/memory.h"
 
 #define CAKEOS_FAT16_SIGNATURE 0x29
 #define CAKEOS_FAT16_FAT_ENTRY_SIZE 0x02
@@ -143,9 +144,59 @@ struct filesystem* fat16_init() {
 	return &fat16_fs;
 }
 
+static void fat16_init_private(struct disk* disk, struct fat_private* private) {
+
+	memset(private, 0, sizeof(struct fat_private));
+	private->cluster_read_stream = diskstreamer_new(disk->id);
+	private->fat_read_stream = diskstreamer_new(disk->id);
+	private->directory_stream = diskstreamer_new(disk->id);
+
+}
+
+int fat16_get_root_directory(struct disk* disk, struct fat_private* fat_private, struct fat_directory* directory) {
+
+	int res = 0;
+	struct fat_header* primary_header = &fat_private->header.primary_header;
+	int root_dir_sector_pos = (primary_header->fat_copies * primary_header->sectors_per_fat) + primary_header->reserved_sectors;
+	int root_dir_entries = fat_private->header.primary_header.root_dir_entries;
+	int root_dir_size = (root_dir_entries * sizeof(struct fat_directory_item));
+	int total_sectors = root_dir_size / disk->sector_size;
+	if (root_dir_size % disk->sector_size) {
+		total_sectors += 1;
+	}
+
+	return res;
+}
+
 int fat16_resolve(struct disk* disk) {
 
-	return 0; 
+	int res = 0;
+	struct fat_private* fat_private = kzalloc(sizeof(struct fat_private));
+	fat16_init_private(disk, fat_private);
+
+	struct disk_stream* stream = diskstreamer_new(disk->id);
+	if (!stream) {
+		res = -ENOMEM;
+		goto out;
+	}
+
+	if (diskstream_read(stream, &fat_private->header, sizeof(fat_private->header)) != CAKEOS_ALL_OK) {
+		res = -EIO;
+		goto out;
+	}
+
+	if (fat_private->header.shared.extended_header.signature != 0x29) {
+		res = -EFSNOTUS;
+		goto out;
+	}
+
+	if (fat16_get_root_directory(disk, fat_private, &fat_private->root_directory) != CAKEOS_ALL_OK) {
+		res = -EIO;
+		goto out;
+	}
+
+out:
+	return res;
 }
 
 void* fat16_open(struct disk* disk, struct path_part* path, FILE_MODE mode) {

@@ -41,6 +41,7 @@ void disk_search_and_init() {
 	disk.type = CAKEOS_DISK_TYPE_REAL;
 	disk.sector_size = CAKEOS_SECTOR_SIZE;
 	disk.filesystem = fs_resolve(&disk);
+	disk.id = 0;
 
 }
 
