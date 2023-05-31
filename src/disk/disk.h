@@ -18,7 +18,7 @@ struct disk {
 	struct filesystem* filesystem;
 
 	// Private data of the filesystem
-	void* fs_data;
+	void* fs_private;
 
 };
 
