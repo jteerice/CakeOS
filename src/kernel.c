@@ -1,7 +1,9 @@
 #include "kernel.h"
+#include "config.h"
 #include "idt/idt.h"
 #include "io/io.h"
 #include <stdint.h>
+#include "memory/memory.h"
 #include <stddef.h>
 #include "memory/heap/kheap.h"
 #include "memory/paging/paging.h"
@@ -10,6 +12,7 @@
 #include "string/string.h"
 #include "disk/streamer.h"
 #include "fs/file.h"
+#include "gdt/gdt.h"
 
 uint16_t* video_mem = 0;
 uint16_t terminal_row = 0;
@@ -69,10 +72,29 @@ void print(const char* str) {
 }
 
 static struct paging_4gb_chunk* kernel_chunk = 0;
+
+void panic(const char* msg) {
+
+	print(msg);
+	while (1) {}
+}
+
+struct gdt gdt_real[CAKEOS_TOTAL_GDT_SEGMENTS];
+struct gdt_structured gdt_structured[CAKEOS_TOTAL_GDT_SEGMENTS] = {
+	{.base = 0x00, .limit = 0x00, .type = 0x00}, // NULL SEGMENT
+	{.base = 0x00, .limit = 0xffffffff, .type = 0x9a}, // Kernel code segment
+	{.base = 0x00, .limit = 0xffffffff, .type = 0x92} // Kernel data segment	
+};
+
 void kernel_main() {
 
 	terminal_initialize();
 	print("Hello World!\n"); 
+
+	// Load the gdt
+	memset(gdt_real, 0x00, sizeof(gdt_real));
+	gdt_structured_to_gdt(gdt_real, gdt_structured, CAKEOS_TOTAL_GDT_SEGMENTS);
+	gdt_load(gdt_real, sizeof(gdt_real));
 
 	// Initialize heap
 	kheap_init();
