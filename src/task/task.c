@@ -1,4 +1,5 @@
 #include "task.h"
+#include "process.h"
 #include "memory/heap/kheap.h"
 #include "kernel.h"
 #include "status.h"
@@ -9,14 +10,14 @@ struct task* current_task = 0;
 struct task* task_tail = 0;
 struct task* task_head = 0;
 
-int task_init(struct task* task);
+int task_init(struct task* task, struct process* process);
 
 struct task* task_current() {
 
 	return current_task;
 }
 
-struct task* task_new() {
+struct task* task_new(struct process* process) {
 
 	int res = 0;
 	struct task* task = kzalloc(sizeof(struct task));
@@ -25,7 +26,7 @@ struct task* task_new() {
 		goto out;
 	}
 
-	res = task_init(task);
+	res = task_init(task, process);
 	if (res != CAKEOS_ALL_OK) {
 		goto out;
 	}
@@ -87,7 +88,7 @@ int task_free(struct task* task) {
 	return 0;
 }
 
-int task_init(struct task* task) {
+int task_init(struct task* task, struct process* process) {
 
 	memset(task, 0, sizeof(struct task));
 	task->page_directory = paging_new_4gb(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
@@ -98,6 +99,7 @@ int task_init(struct task* task) {
 	task->registers.ip = CAKEOS_PROGRAM_VIRTUAL_ADDRESS;
 	task->registers.ss = USER_DATA_SEGMENT;
 	task->registers.esp = CAKEOS_PROGRAM_VIRTUAL_STACK_ADDRESS_START;
+	task->process = process;
 
 	return 0;
 }

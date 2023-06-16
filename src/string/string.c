@@ -80,6 +80,22 @@ int strnlen_terminator(const char* str, int max, char terminator) {
 	return i;
 }
 
+char* strncpy(char* dest, const char* src, int num) {
+
+	char* tmp = dest;
+	int i = 0;
+	for (i = 0; i < num - 1; i++) {
+		if (src[i] == 0x00) {
+			break;
+		}
+		dest[i] = src[i];
+	}
+
+	dest[i] = 0x00;
+
+	return tmp;
+}
+
 char* strcpy(char* dest, const char* src) {
 
 	char* tmp = dest;
