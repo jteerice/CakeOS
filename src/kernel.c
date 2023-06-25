@@ -104,7 +104,6 @@ struct gdt_structured gdt_structured[CAKEOS_TOTAL_GDT_SEGMENTS] = {
 void kernel_main() {
 
 	terminal_initialize();
-	print("Hello World!\n"); 
 
 	// Load the gdt
 	memset(gdt_real, 0x00, sizeof(gdt_real));
