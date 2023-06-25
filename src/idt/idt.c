@@ -1,4 +1,5 @@
 #include "idt.h"
+#include "status.h"
 #include "task/task.h"
 #include "config.h"
 #include "memory/memory.h"
@@ -8,6 +9,7 @@
 struct idt_desc idt_descriptors[CAKEOS_TOTAL_INTERRUPTS];
 struct idtr_desc idtr_descriptor;
 
+static INTERRUPT_CALLBACK_FUNCTION interrupt_callbacks[CAKEOS_TOTAL_INTERRUPTS];
 static ISR80H_COMMAND isr80h_commands[CAKEOS_MAX_ISR80H_COMMANDS];
 extern void idt_load(struct idtr_desc* ptr);
 extern void int21h();
@@ -23,6 +25,13 @@ void no_interrupt_handler() {
 
 void interrupt_handler(int interrupt, struct interrupt_frame* frame) {
 
+	kernel_page();
+	if (interrupt_callbacks[interrupt] != 0) {
+		task_current_save_state(frame);
+		interrupt_callbacks[interrupt](frame);
+	}
+
+	task_page();
 	outb(0x20, 0x20);
 
 }
@@ -60,6 +69,17 @@ void idt_init() {
 	// Load IDT
 	idt_load(&idtr_descriptor);
 
+}
+
+int idt_register_interrupt_callback(int interrupt, INTERRUPT_CALLBACK_FUNCTION interrupt_callback) {
+
+	if (interrupt < 0 || interrupt > CAKEOS_TOTAL_INTERRUPTS) {
+		return -EINVARG;
+	}
+
+	interrupt_callbacks[interrupt] = interrupt_callback;
+
+	return 0;
 }
 
 void isr80h_register_command(int command_id, ISR80H_COMMAND command) {
