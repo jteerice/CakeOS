@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "keyboard/keyboard.h"
 #include "isr80h/isr80h.h"
 #include "status.h"
 #include "task/task.h"
@@ -141,6 +142,9 @@ void kernel_main() {
 
 	// Register kernel commands
 	isr80h_register_commands();
+
+	// Initialize keyboard
+	keyboard_init();
 
 	struct process* process = 0;
 	int res = process_load("0:/blank.bin", &process);
