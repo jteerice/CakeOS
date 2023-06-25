@@ -35,21 +35,41 @@ void terminal_putchar(int x, int y, char c, char color) {
 
 }
 
+void terminal_backspace() {
+	
+	if (terminal_row == 0 && terminal_col == 0) {
+		return;
+	}
+
+	if (terminal_col == 0) {
+		terminal_row -= 1;
+		terminal_col = VGA_WIDTH;
+	}
+
+	terminal_col -= 1;
+	terminal_writechar(' ', 15);
+	terminal_col -= 1;
+}
+
 void terminal_writechar(char c, char color) {
 
 	if (c == '\n') {
 		terminal_row++;
 		terminal_col = 0;
-	} else {
-		terminal_putchar(terminal_col, terminal_row, c, color);
-		terminal_col++;
-
-		if (terminal_col >= VGA_WIDTH) {
-			terminal_col = 0;
-			terminal_row++;
-		}
+		return;
 	}
 
+	if (c == 0x08) {
+		terminal_backspace();
+		return;
+	}
+	
+	terminal_putchar(terminal_col, terminal_row, c, color);
+	terminal_col += 1;
+	if (terminal_col >= VGA_WIDTH) {
+		terminal_col = 0;
+		terminal_row += 1;
+	}
 }
 
 
@@ -151,8 +171,6 @@ void kernel_main() {
 	if (res != CAKEOS_ALL_OK) {
 		panic("Failed to load blank.bin\n");
 	}
-
-	keyboard_push('A');
 
 	task_run_first_ever_task();
 	
