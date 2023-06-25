@@ -13,15 +13,15 @@ extern void idt_load(struct idtr_desc* ptr);
 extern void int21h();
 extern void no_interrupt();
 extern void isr80h_wrapper();
+extern void* interrupt_pointer_table[CAKEOS_TOTAL_INTERRUPTS];
 
-void int21h_handler() {
+void no_interrupt_handler() {
 
-	print("Keyboard pressed\n");
 	outb(0x20, 0x20);
 
 }
 
-void no_interrupt_handler() {
+void interrupt_handler(int interrupt, struct interrupt_frame* frame) {
 
 	outb(0x20, 0x20);
 
@@ -51,11 +51,10 @@ void idt_init() {
 	idtr_descriptor.base = (uint32_t)idt_descriptors;
 
 	for (int i = 0; i < CAKEOS_TOTAL_INTERRUPTS; i++) {
-		idt_set(i, no_interrupt);
+		idt_set(i, interrupt_pointer_table[i]);
 	}
 
 	idt_set(0, idt_zero);
-	idt_set(0x21, int21h);
 	idt_set(0x80, isr80h_wrapper);
 
 	// Load IDT
