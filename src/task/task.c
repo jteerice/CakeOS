@@ -1,4 +1,5 @@
 #include "task.h"
+#include "loader/formats/elfloader.h"
 #include "process.h"
 #include "memory/heap/kheap.h"
 #include "kernel.h"
@@ -195,6 +196,9 @@ int task_init(struct task* task, struct process* process) {
 	}
 
 	task->registers.ip = CAKEOS_PROGRAM_VIRTUAL_ADDRESS;
+	if (process->filetype == PROCESS_FILETYPE_ELF) {
+		task->registers.ip = elf_header(process->elf_file)->e_entry;
+	}
 	task->registers.ss = USER_DATA_SEGMENT;
 	task->registers.cs = USER_CODE_SEGMENT;
 	task->registers.esp = CAKEOS_PROGRAM_VIRTUAL_STACK_ADDRESS_START;
