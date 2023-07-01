@@ -5,6 +5,11 @@
 #include "task.h"
 #include "config.h"
 
+#define PROCESS_FILETYPE_ELF 0
+#define PROCESS_FILETYPE_BINARY 1
+
+typedef unsigned char PROCESS_FILETYPE;
+
 struct process {
 
 	uint16_t id;
@@ -13,8 +18,14 @@ struct process {
 	struct task* task;
 	// Malloc allocations of the process
 	void* allocations[CAKEOS_MAX_PROGRAM_ALLOCATIONS];
-	// Physical pointer to process mem
-	void* ptr;
+
+	PROCESS_FILETYPE filetype;
+
+	union {
+		// Physical pointer to process mem
+		void* ptr;
+		struct elf_file* elf_file;
+	};
 	// Physical pointer to stack mem
 	void* stack;
 	// Size of the data pointed to by ptr
