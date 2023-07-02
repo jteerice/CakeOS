@@ -11,6 +11,13 @@
 
 typedef unsigned char PROCESS_FILETYPE;
 
+struct process_allocation {
+
+	void* ptr;
+	size_t size;
+
+};
+
 struct process {
 
 	uint16_t id;
@@ -18,7 +25,7 @@ struct process {
 	// Main process task
 	struct task* task;
 	// Malloc allocations of the process
-	void* allocations[CAKEOS_MAX_PROGRAM_ALLOCATIONS];
+	struct process_allocation allocations[CAKEOS_MAX_PROGRAM_ALLOCATIONS];
 
 	PROCESS_FILETYPE filetype;
 
