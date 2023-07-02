@@ -3,7 +3,7 @@
 section .asm
 
 global print:function
-global getkey:function
+global cakeos_getkey:function
 global cakeos_malloc:function
 global cakeos_free:function
 global cakeos_putchar:function
@@ -19,7 +19,7 @@ print:
 	pop ebp
 	ret
 
-getkey:
+cakeos_getkey:
 	push ebp
 	mov ebp, esp
 	mov eax, 2

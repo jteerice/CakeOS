@@ -1,6 +1,6 @@
-FILES=./build/start.o ./build/cakeos.o ./build/stdlib.o ./build/stdio.o
-INCLUDES=
-FLAGS= -g
+FILES=./build/start.o ./build/cakeos.asm.o ./build/stdlib.o ./build/stdio.o ./build/cakeos.o
+INCLUDES=-I./src
+FLAGS = -g -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 
 all: $(FILES)
 	i686-elf-ld -m elf_i386 -relocatable $(FILES) -o ./stdlib.elf
@@ -8,8 +8,12 @@ all: $(FILES)
 ./build/start.o: ./src/start.asm
 	nasm -f elf ./src/start.asm -o ./build/start.o
 
-./build/cakeos.o: ./src/cakeos.asm
-	nasm -f elf ./src/cakeos.asm -o ./build/cakeos.o
+./build/cakeos.asm.o: ./src/cakeos.asm
+	nasm -f elf ./src/cakeos.asm -o ./build/cakeos.asm.o
+
+./build/cakeos.o: ./src/cakeos.c
+	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/cakeos.c -o ./build/cakeos.o
+
 
 ./build/stdlib.o: ./src/stdlib.c
 	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/stdlib.c -o ./build/stdlib.o

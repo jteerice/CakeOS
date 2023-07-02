@@ -4,18 +4,9 @@
 
 int main(int argc, char** argv) {
 
-	print("Hello World!\n");
-	print(itoa(1234));	
-
-	putchar('Z');
-		
-	void* ptr = malloc(512);
-	free(ptr);
+	printf("My age is %i\n", 30);
 
 	while (1) {
-		if (getkey() != 0) {
-			print("Key pressed!\n");
-		}
 	}
 
 	return 0;
