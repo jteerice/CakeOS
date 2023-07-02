@@ -1,5 +1,5 @@
-#ifndef STDLIB_H
-#define STDLIB_H
+#ifndef CAKEOS_STDLIB_H
+#define CAKEOS_STDLIB_H
 
 #include <stddef.h>
 
