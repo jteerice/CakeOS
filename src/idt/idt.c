@@ -1,4 +1,5 @@
 #include "idt.h"
+#include "task/process.h"
 #include "status.h"
 #include "task/task.h"
 #include "config.h"
@@ -53,6 +54,13 @@ void idt_set(int interrupt_num, void* address) {
 
 }
 
+void idt_handle_exception() {
+
+	// Add crash function to load a program to display crash information
+	process_terminate(task_current()->process);
+	task_next();
+}
+
 void idt_init() {
 	
 	memset(idt_descriptors, 0, sizeof(idt_descriptors));
@@ -65,6 +73,10 @@ void idt_init() {
 
 	idt_set(0, idt_zero);
 	idt_set(0x80, isr80h_wrapper);
+
+	for (int i = 0; i < 0x20; i++) {
+		idt_register_interrupt_callback(i, idt_handle_exception);
+	}
 
 	// Load IDT
 	idt_load(&idtr_descriptor);

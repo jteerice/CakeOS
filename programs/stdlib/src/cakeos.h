@@ -30,5 +30,6 @@ struct command_argument* cakeos_parse_command(const char* command, int max);
 void cakeos_process_get_arguments(struct process_arguments* arguments);
 int cakeos_system(struct command_argument* arguments);
 int cakeos_system_run(const char* command);
+void cakeos_exit();
 
 #endif
