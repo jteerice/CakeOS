@@ -11,6 +11,13 @@ struct command_argument {
 
 };
 
+struct process_arguments {
+
+	int argc;
+	char** argv;
+
+};
+
 void print(const char* message);
 int cakeos_getkey();
 void* cakeos_malloc(size_t size);
@@ -20,5 +27,8 @@ int cakeos_getkeyblock();
 void cakeos_terminal_readline(char* out, int max, bool output_while_typing);
 void cakeos_process_load_start(const char* filename);
 struct command_argument* cakeos_parse_command(const char* command, int max);
+void cakeos_process_get_arguments(struct process_arguments* arguments);
+int cakeos_system(struct command_argument* arguments);
+int cakeos_system_run(const char* command);
 
 #endif

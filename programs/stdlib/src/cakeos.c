@@ -4,7 +4,7 @@
 struct command_argument* cakeos_parse_command(const char* command, int max) {
 
 	struct command_argument* root_command = 0;
-	char scommand[1024];
+	char scommand[1025];
 	if (max >= (int)sizeof(scommand)) {
 		return 0;
 	}
@@ -77,4 +77,16 @@ void cakeos_terminal_readline(char* out, int max, bool output_while_typing) {
 	}
 
 	out[i] = 0x00;
+}
+
+int cakeos_system_run(const char* command) {
+
+	char buf[1024];
+	strncpy(buf, command, sizeof(buf));
+	struct command_argument* root_command_argument = cakeos_parse_command(buf, sizeof(buf)); 
+	if (!root_command_argument) {
+		return -1;
+	}
+
+	return cakeos_system(root_command_argument);
 }
