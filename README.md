@@ -10,7 +10,9 @@ This is a basic operating system and bootloader for the i386 architecture.
 
 ## How to Run
 To run the OS in its current state, clone the repository and ensure qemu is installed. Next, run the following command in the root folder of the project.
-```qemu-system-i386 -hda ./bin/os.bin```
+```
+qemu-system-i386 -hda ./bin/os.bin
+```
 
 Future Features Being Implemented
 - [x] Shell
